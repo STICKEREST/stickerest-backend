@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Express + PlanetScale",
   "main": "index.js",
-  // "scripts": {
-  //   "start": "nodemon app.ts"
-  // },
   "author": "",
   "license": "ISC",
   "dependencies": {
