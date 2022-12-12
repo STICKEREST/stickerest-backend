@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Express + PlanetScale",
   "main": "index.js",
+  "scripts": {
+    "start": "node app.ts"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
