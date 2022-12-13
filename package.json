@@ -1,7 +1,6 @@
 {
   "name": "backend_stickerest",
   "version": "1.0.0",
-  "type": "module",
   "description": "Express + PlanetScale",
   "main": "index.js",
   "scripts": {
