@@ -1,4 +1,4 @@
-"use strict";
+// "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDb = exports.initDb = void 0;
 require('dotenv').config();
