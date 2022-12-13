@@ -8,6 +8,9 @@
     "start": "node app.ts",
     "postinstall": "tsc"
   },
+  "engines": {
+    "node": "19.0.0"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
