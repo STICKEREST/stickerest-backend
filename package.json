@@ -5,7 +5,7 @@
   "description": "Express + PlanetScale",
   "main": "index.js",
   "scripts": {
-    "start": "node app.ts",
+    "start": "node build/app.js",
     "postinstall": "tsc"
   },
   "engines": {
