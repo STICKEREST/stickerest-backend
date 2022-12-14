@@ -32,7 +32,7 @@ const createUser = (connection) => {
         connection.query(`INSERT INTO Utilizer (email,nickname, password) VALUES ('${user.email}', '${user.nickname}','${hashedPw}');`, function (err, rows, fields) {
             if (err)
                 res.send("error");
-            res.send("Successfully signed up!");
+            res.send(rows);
         });
     };
 };
