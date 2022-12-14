@@ -31,8 +31,8 @@ const createUser = (connection) => {
         const hashedPw = yield bcrypt_1.default.hash(user.password, 0); //salt not used atm
         connection.query(`INSERT INTO Utilizer (email,nickname, password) VALUES ('${user.email}', '${user.nickname}','${hashedPw}');`, function (err, rows, fields) {
             if (err)
-                res.status(500).json("error");
-            res.status(201).json("Successfully signed up!");
+                res.send("error");
+            res.send("Successfully signed up!");
         });
     });
 };
