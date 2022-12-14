@@ -33,7 +33,9 @@ const createUser = (connection) => {
             if (err)
                 res.send("error");
             res.send(rows);
+            console.log("aao");
         });
+        console.log("aao");
     };
 };
 exports.createUser = createUser;
