@@ -29,12 +29,14 @@ const createUser = (connection) => {
     return (req, res) =>  {
         const user = req.body;
         const hashedPw = yield bcrypt_1.default.hash(user.password, 0); //salt not used atm
-        connection.query(`INSERT INTO Utilizer (email,nickname, password) VALUES ('${user.email}', '${user.nickname}','${hashedPw}');`, function (err, rows, fields) {
+        ((req, res) => {connection.query(`INSERT INTO Utilizer (email,nickname, password) VALUES ('${user.email}', '${user.nickname}','${hashedPw}');`, function (err, rows, fields) {
             if (err)
                 res.send("error");
             res.send(rows);
             console.log("aao");
         });
+        console.log("aao");
+        })(req, res);
         console.log("aao");
     };
 };

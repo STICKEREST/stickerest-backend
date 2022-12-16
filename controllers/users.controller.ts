@@ -79,6 +79,25 @@ export const getUser = (connection: Database) : any => {
 
 }
 
+export const getHome = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+        //@ts-ignore
+        const email = req.user.email;
+    
+        connection.query(
+            `SELECT * FROM Utilizer U WHERE U.nickname = '${email}';`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) throw err
+
+                console.log(rows);
+            
+                res.send(rows)
+            })
+    }
+
+}
+
 // export const deleteUser = (connection : Database) : any => {
 //     return (req : any, res : any) : void => {
 //         const { nickname } = req.params;
