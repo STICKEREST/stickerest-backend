@@ -84,16 +84,18 @@ export const getHome = (connection: Database) : any => {
     return (req : Request, res : Response) : void => {
         //@ts-ignore
         const email = req.user.email;
-    
-        connection.query(
-            `SELECT * FROM Utilizer U WHERE U.nickname = '${email}';`, 
-            function (err: any, rows: any, fields: any) {
-                if (err) throw err
 
-                console.log(rows);
+        res.json(email);
+    
+        // connection.query(
+        //     `SELECT * FROM Utilizer U WHERE U.nickname = '${email}';`, 
+        //     function (err: any, rows: any, fields: any) {
+        //         if (err) throw err
+
+        //         console.log(rows);
             
-                res.send(rows)
-            })
+        //         res.send(rows)
+        //     })
     }
 
 }
