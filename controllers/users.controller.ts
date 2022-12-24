@@ -3,6 +3,7 @@ import bcrypt, { hash } from 'bcrypt';
 import { ExecException } from "child_process";
 import passport from "passport";
 import { NextFunction, Request, Response } from "express";
+import { v4 as uuidv4 } from 'uuid';
 
 export const getUsers = (connection: Database) : any => {
     return (req : any, res : any) : void => {
@@ -97,23 +98,27 @@ export const getHome = (connection: Database) : any => {
 
 }
 
-export const createStickerPack = (connection: Database) : any => {
+// export const createStickerPack = (connection: Database) : any => {
 
-    return (req : Request, res : Response) : void => {
-        const email = res.locals.user.email;
+//     return (req : Request, res : Response) : void => {
+//         const email : string = res.locals.user.email;
+//         const sticker : any = req.body;
+//         let yourDate = new Date()
+//         const today : string = yourDate.toISOString().split('T')[0];
     
-        connection.query(
-            `SELECT * FROM Utilizer U WHERE U.email = '${email}';`, 
-            function (err: any, rows: any, fields: any) {
-                if (err) throw err
+//         connection.query(
+//             `INSERT INTO WhatsappStickerPack (nr_downloads, price_digital, name, Designer, dt_upload, nr_sold, physical_price, link)
+//             VALUES (0, 00.00, '${sticker.name}', '${email}', '${today}', NULL, NULL, NULL);`, 
+//             function (err: any, rows: any, fields: any) {
+//                 if (err) throw err
 
-                console.log(rows);
+//                 console.log(rows);
             
-                res.send(rows)
-            })
-    }
+//                 res.send(`${sticker.name} added by ${email} successfully`);
+//             })
+//     }
 
-}
+// }
 
 // export const getHome = (connection: Database) : any => {
 
