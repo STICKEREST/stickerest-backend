@@ -13,7 +13,7 @@ router.post('/register', createUser(connection));
 
 router.post('/login', logUser(connection));
 
-router.get('/:nickname', getUser(connection));
+// router.get('/:nickname', getUser(connection));
 
 // router.delete('/:nickname', deleteUser(connection));
 

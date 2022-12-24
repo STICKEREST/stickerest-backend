@@ -82,23 +82,60 @@ export const getUser = (connection: Database) : any => {
 export const getHome = (connection: Database) : any => {
 
     return (req : Request, res : Response) : void => {
-        //@ts-ignore
-        const email = req.user.email;
-
-        res.json(email);
+        const email = res.locals.user.email;
     
-        // connection.query(
-        //     `SELECT * FROM Utilizer U WHERE U.nickname = '${email}';`, 
-        //     function (err: any, rows: any, fields: any) {
-        //         if (err) throw err
+        connection.query(
+            `SELECT * FROM Utilizer U WHERE U.email = '${email}';`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) throw err
 
-        //         console.log(rows);
+                console.log(rows);
             
-        //         res.send(rows)
-        //     })
+                res.send(rows)
+            })
     }
 
 }
+
+export const createStickerPack = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+        const email = res.locals.user.email;
+    
+        connection.query(
+            `SELECT * FROM Utilizer U WHERE U.email = '${email}';`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) throw err
+
+                console.log(rows);
+            
+                res.send(rows)
+            })
+    }
+
+}
+
+// export const getHome = (connection: Database) : any => {
+
+//     console.log('aiuto')
+
+//     return (req : Request, res : Response) : void => {
+//         const  nickname  = "12321";
+
+//         console.log('aaaa')
+    
+//         connection.query(
+//             `SELECT * FROM Utilizer U WHERE U.nickname = '${nickname}';`, 
+//             function (err: any, rows: any, fields: any) {
+//                 if (err) throw err
+
+//                 console.log(rows);
+            
+//                 res.send(rows)
+//             })
+//     }
+
+// }
 
 // export const deleteUser = (connection : Database) : any => {
 //     return (req : any, res : any) : void => {

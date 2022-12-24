@@ -36,9 +36,11 @@ export const sessionMiddleware = (req : Request, res: Response, next : NextFunct
 
 export const checkAuthentication = (req: Request, res: Response, next: NextFunction) => {
   
-    if(req.isAuthenticated()) 
-      next()
-    else
+    if(req.isAuthenticated()) {
+      res.locals.user = req.user; 
+      // console.log(JSON.stringify(res.locals.user));
+      next();
+    } else
       res.status(500).json("Unauthorized");
 
 }
