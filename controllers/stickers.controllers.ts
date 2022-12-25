@@ -22,19 +22,35 @@ export const createStickerPack = (connection: Database) : any => {
 
                 console.log(rows);
             
-                res.send(`${sticker.name} added by ${email} successfully`);
-            })
+                // res.send(`${sticker.name} added by ${email} successfully`);
+            });
+
+        
+
+        connection.query(
+            `SELECT ID FROM WhatsappStickerPack WHERE name='${sticker.name}' AND Designer='${email}' AND dt_upload = '${today}' AND ID NOT IN (SELECT DISTINCT I.ID FROM Image I) LIMIT 1;`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) throw err
+
+                console.log(rows[0].ID);
+
+                res.send(""+rows[0].ID);
+            });
+
+        
     }
 
 }
+
 
 //TODO: it must throw err if there are already stickers
 export const addStickers = (connection: Database) : any => {
 
     return (req : Request, res : Response) : void => {
         const sticker : any = req.body;
-        
         const images : string[] = sticker.image_file;
+        const ID = sticker.ID;
+        const email : string = res.locals.user.email;
 
         let error : undefined | string = undefined;
 
@@ -42,7 +58,7 @@ export const addStickers = (connection: Database) : any => {
 
             connection.query(
                 `INSERT INTO Image (ID, ordinal_order, image_file)
-             VALUES (${sticker.ID}, ${i}, '${images[i]}');`,
+                VALUES (${ID}, ${i}, '${images[i]}');`,
                 function (err: any, rows: any, fields: any) {
                     if (err) 
                         if(error)
@@ -55,9 +71,27 @@ export const addStickers = (connection: Database) : any => {
 
         }
 
-        
-        res.send(`Added ${images.length} stickers to sticker pack ${sticker.ID} ` + error ? " but with the following error: " + error : "");
-        
+        const tags : string[] = sticker.tag;
+
+        for(let i : number = 0; i < tags.length; i++) {
+
+            connection.query(
+                `INSERT INTO Tags (ID, tag)
+                VALUES (${sticker.ID}, '${tags[i]}');`,
+                function (err: any, rows: any, fields: any) {
+                    if (err) 
+                        if(error)
+                            error += err;
+                        else 
+                            error = err;
+    
+                    console.log(rows);
+                })
+
+        }
+    
+        res.send(`${sticker.name} added by ${email} successfully` + error ? " but with the following error: " + error : "");
+
 
     }
 

@@ -18,5 +18,4 @@ router.get('/images-:id', getStickers(connection));
 
 router.get('/:id', getStickerPack(connection));
 
-
 export default router;
