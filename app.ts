@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import { initDb, getDb, Database } from './db';
 import usersRoutes from './routes/users.routes';
+import stickersRoutes from './routes/stickers.routes';
 import auth from './routes/auth/auth.routes';
 import passport from 'passport';
 import { setupPassport } from './middlewares/passport.middleware';
@@ -30,6 +31,8 @@ app.use(passport.session());
 // })
 
 app.use('/users', usersRoutes);
+
+app.use('/stickers', stickersRoutes);
 
 app.use('/auth', checkAuthentication, auth);
 
