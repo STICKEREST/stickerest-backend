@@ -98,6 +98,107 @@ export const getHome = (connection: Database) : any => {
 
 }
 
+export const addFavorites = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+        const { id } = req.params;
+        const email = res.locals.user.email;
+    
+        connection.query(
+            `INSERT INTO Favorites (email, ID) VALUES ('${email}', ${id})`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) {
+
+                    res.send("Already in saved")
+
+                } else {
+
+                    console.log(rows);
+                    res.send(rows);
+
+                }
+                
+            })
+    }
+
+}
+
+export const removeFavorites = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+        const { id } = req.params;
+        const email = res.locals.user.email;
+    
+        connection.query(
+            `DELETE FROM Favorites WHERE email = '${email}' AND ID = ${id}`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) {
+
+                    res.send("Already removed")
+
+                } else {
+
+                    console.log(rows);
+                    res.send(rows);
+
+                }
+                
+            })
+    }
+
+}
+
+export const addSaved = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+        const { id } = req.params;
+        const email = res.locals.user.email;
+    
+        connection.query(
+            `INSERT INTO Saved (email, ID) VALUES ('${email}', ${id})`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) {
+
+                    res.send("Already in favorites")
+
+                } else {
+
+                    console.log(rows);
+                    res.send(rows);
+
+                }
+                
+            })
+    }
+
+}
+
+export const removeSaved = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+        const { id } = req.params;
+        const email = res.locals.user.email;
+    
+        connection.query(
+            `DELETE FROM Saved WHERE email = '${email}' AND ID = ${id}`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) {
+
+                    res.send("Already removed")
+
+                } else {
+
+                    console.log(rows);
+                    res.send(rows);
+
+                }
+                
+            })
+    }
+
+}
+
+
 // export const createStickerPack = (connection: Database) : any => {
 
 //     return (req : Request, res : Response) : void => {

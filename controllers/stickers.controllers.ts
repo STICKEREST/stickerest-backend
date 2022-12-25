@@ -62,3 +62,4 @@ export const addStickers = (connection: Database) : any => {
     }
 
 }
+
