@@ -65,10 +65,10 @@ export const logOut = () : any => {
 export const getUser = (connection: Database) : any => {
 
     return (req : Request, res : Response) : void => {
-        const { nickname } = req.params;
+        const email = res.locals.user.email;
     
         connection.query(
-            `SELECT * FROM Utilizer U WHERE U.nickname = '${nickname}';`, 
+            `SELECT * FROM Utilizer U WHERE U.email = '${email}';`, 
             function (err: any, rows: any, fields: any) {
                 if (err) throw err
 
