@@ -80,6 +80,34 @@ export const getUser = (connection: Database) : any => {
 
 }
 
+export const updateUser = (connection : Database) : any => {
+        return (req : any, res : any) : void => {
+            const { nickname, email } = req.body; 
+        
+            let updates : string[] = [];
+        
+            if(email)
+                updates.push(`U.email = '${email}'`);
+            // if(password)
+            //     updates.push(`U.password = '${password}'`);
+        
+            const query : string = updates.reduce((acc : string, update : string, index : number) => 
+                                                acc = acc + update + (index !== updates.length-1 ? "," : "")
+                                            ,"");
+        
+            if(updates.length != 0)
+                connection.query(
+                    `UPDATE Utilizer U SET ${query} WHERE U.nickname = '${nickname}';`, 
+                    function (err: any, rows: any, fields: any) {
+                        if (err) throw err
+                    
+                        res.send(rows)
+                    })
+            else
+                res.send("No modifications have been made");
+        }
+    }
+
 export const getHome = (connection: Database) : any => {
 
     return (req : Request, res : Response) : void => {
