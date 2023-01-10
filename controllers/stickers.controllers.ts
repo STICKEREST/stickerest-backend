@@ -8,6 +8,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 const cloudinary = require('cloudinary').v2;
 
+var fs = require('fs');
+
+
 
 export const createStickerPack = (connection: Database) : any => {
 
@@ -96,6 +99,8 @@ export const addStickers = (connection: Database) : any => {
                     const url = info.secure_url;
     
                     console.log("Image " + i + " has been uploaded at " + url);
+
+                    fs.unlinkSync(uploadPath);
     
                     connection.query(
                                 `INSERT INTO Image (ID, ordinal_order, image_file)
@@ -108,6 +113,7 @@ export const addStickers = (connection: Database) : any => {
                                             error = err;
                     
                                     // console.log(rows);
+                                    
                                 })
                 })
                 .catch((error: any) => console.log(error));
