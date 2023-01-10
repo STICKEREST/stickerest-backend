@@ -62,23 +62,23 @@ export const addStickers = (connection: Database) : any => {
         
         const tags : string[] = sticker.tag;
 
-        for(let i : number = 0; i < tags.length; i++) {
+        if(tags)
+            for(let i : number = 0; i < tags.length; i++) {
 
-            connection.query(
-                `INSERT INTO Tags (ID, tag)
-                VALUES (${sticker.ID}, '${tags[i]}');`,
-                function (err: any, rows: any, fields: any) {
-                    if (err) 
-                        if(error)
-                            error += err;
-                        else 
-                            error = err;
-    
-                    console.log(rows);
-                })
+                connection.query(
+                    `INSERT INTO Tags (ID, tag)
+                    VALUES (${sticker.ID}, '${tags[i]}');`,
+                    function (err: any, rows: any, fields: any) {
+                        if (err) 
+                            if(error)
+                                error += err;
+                            else 
+                                error = err;
+        
+                    })
 
-        }
-        console.log(images);
+            }
+        // console.log("Images ARE " + JSON.stringify(images));
         
         for(let i = 0; i < images.length; i++) {
             const image = images[i];
@@ -95,11 +95,11 @@ export const addStickers = (connection: Database) : any => {
                 .then((info: any) => {
                     const url = info.secure_url;
     
-                    // console.log("Image " + i + " has been uploaded at " + url);
+                    console.log("Image " + i + " has been uploaded at " + url);
     
                     connection.query(
                                 `INSERT INTO Image (ID, ordinal_order, image_file)
-                                VALUES (${ID}, ${i}, '${images[i]}');`,
+                                VALUES (${ID}, ${i}, '${url}');`,
                                 function (err: any, rows: any, fields: any) {
                                     if (err) 
                                         if(error)
@@ -107,7 +107,7 @@ export const addStickers = (connection: Database) : any => {
                                         else 
                                             error = err;
                     
-                                    console.log(rows);
+                                    // console.log(rows);
                                 })
                 })
                 .catch((error: any) => console.log(error));
@@ -119,7 +119,7 @@ export const addStickers = (connection: Database) : any => {
         }
 
     
-        res.send(`${sticker.name} added by ${email} successfully` + error ? " but with the following error: " + error : "");
+        res.send(`Stickers and tags added by ${email} successfully ` + error !== undefined  ? ` with the error: ${error} ` : ` `);
 
 
     }
