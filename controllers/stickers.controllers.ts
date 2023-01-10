@@ -50,26 +50,40 @@ export const createStickerPack = (connection: Database) : any => {
 export const addStickers = (connection: Database) : any => {
 
     return (req : Request, res : Response) : void => {
-        // const sticker : any = req.body;
-        // const images : string[] = req.files.map((val) => (val.tempFilePath + "\\" + val.name));
-        // console.log(req.files["a"]);
+        const sticker : any = req.body;
+        
         //@ts-ignore
         const images : any = Object.values(req.files);
-        //@ts-ignore
-            // console.log(req.files["a"]);
-        // console.log(image);
-        // const ID = sticker.ID;
-        // const email : string = res.locals.user.email;
         
-        // let error : undefined | string = undefined;
+        const ID = sticker.ID;
+        const email : string = res.locals.user.email;
         
-        // const images = req.files;
+        let error : undefined | string = undefined;
+        
+        const tags : string[] = sticker.tag;
+
+        for(let i : number = 0; i < tags.length; i++) {
+
+            connection.query(
+                `INSERT INTO Tags (ID, tag)
+                VALUES (${sticker.ID}, '${tags[i]}');`,
+                function (err: any, rows: any, fields: any) {
+                    if (err) 
+                        if(error)
+                            error += err;
+                        else 
+                            error = err;
+    
+                    console.log(rows);
+                })
+
+        }
         console.log(images);
         
         for(let i = 0; i < images.length; i++) {
             const image = images[i];
 
-        console.log(image);
+            console.log(image);
             const uploadPath = "./public/files/temp/" + image.name;
             console.log(uploadPath);
             image.mv(uploadPath, function(err: any) {
@@ -81,20 +95,20 @@ export const addStickers = (connection: Database) : any => {
                 .then((info: any) => {
                     const url = info.secure_url;
     
-                    console.log("Image " + i + " has been uploaded at " + url);
+                    // console.log("Image " + i + " has been uploaded at " + url);
     
-                    // connection.query(
-                    //             `INSERT INTO Image (ID, ordinal_order, image_file)
-                    //             VALUES (${ID}, ${i}, '${images[i]}');`,
-                    //             function (err: any, rows: any, fields: any) {
-                    //                 if (err) 
-                    //                     if(error)
-                    //                         error += err;
-                    //                     else 
-                    //                         error = err;
+                    connection.query(
+                                `INSERT INTO Image (ID, ordinal_order, image_file)
+                                VALUES (${ID}, ${i}, '${images[i]}');`,
+                                function (err: any, rows: any, fields: any) {
+                                    if (err) 
+                                        if(error)
+                                            error += err;
+                                        else 
+                                            error = err;
                     
-                    //                 console.log(rows);
-                    //             })
+                                    console.log(rows);
+                                })
                 })
                 .catch((error: any) => console.log(error));
 
@@ -104,68 +118,8 @@ export const addStickers = (connection: Database) : any => {
     
         }
 
-//@ts-ignore
-//         let a = req.files["a"];
-
-//         const uploadPath = "./public/files/temp/" + image;
-// //@ts-ignore
-//         a.mv(uploadPath);
-
-        
-        // cloudinary.uploader
-        // .upload(uploadPath)
-        // // .then((result: any)=>result.json())
-        // .then((info: any) => {
-        //     const url = info.secure_url;
-
-        //     console.log(url);
-
-        //     //continua qua il codice!!
-
-            
-
-        //     //ALLA FINE
-
-        // })
-        // .catch((error: any) => console.log(error));
-
-        // for(let i : number = 0; i < images.length; i++) {
-
-        //     connection.query(
-        //         `INSERT INTO Image (ID, ordinal_order, image_file)
-        //         VALUES (${ID}, ${i}, '${images[i]}');`,
-        //         function (err: any, rows: any, fields: any) {
-        //             if (err) 
-        //                 if(error)
-        //                     error += err;
-        //                 else 
-        //                     error = err;
     
-        //             console.log(rows);
-        //         })
-
-        // }
-
-        // const tags : string[] = sticker.tag;
-
-        // for(let i : number = 0; i < tags.length; i++) {
-
-        //     connection.query(
-        //         `INSERT INTO Tags (ID, tag)
-        //         VALUES (${sticker.ID}, '${tags[i]}');`,
-        //         function (err: any, rows: any, fields: any) {
-        //             if (err) 
-        //                 if(error)
-        //                     error += err;
-        //                 else 
-        //                     error = err;
-    
-        //             console.log(rows);
-        //         })
-
-        // }
-    
-        // res.send(`${sticker.name} added by ${email} successfully` + error ? " but with the following error: " + error : "");
+        res.send(`${sticker.name} added by ${email} successfully` + error ? " but with the following error: " + error : "");
 
 
     }
