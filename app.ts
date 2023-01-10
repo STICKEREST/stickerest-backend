@@ -7,7 +7,15 @@ import stickersRoutes from './routes/stickers.routes';
 import auth from './routes/auth/auth.routes';
 import passport from 'passport';
 import { setupPassport } from './middlewares/passport.middleware';
-import {sessionMiddleware, checkAuthentication} from './middlewares/session.middleware'
+import {sessionMiddleware, checkAuthentication} from './middlewares/session.middleware';
+var fs = require('fs');
+
+
+var dir = './public/files/temp';
+
+if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir, { recursive: true });
+}
 
 require('dotenv').config();
 
