@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { Database, getDb } from '../../db';
 import { getHome, getUser, logOut, addFavorites, addSaved, removeFavorites, removeSaved, updateUser } from '../../controllers/users.controller';
-import {createStickerPack, addStickers} from '../../controllers/stickers.controllers';
+import {createStickerPack} from '../../controllers/stickers.controllers';
 
 const router: Router = express.Router();
 const connection: Database = getDb();
@@ -12,7 +12,7 @@ router.get('/home', getHome(connection));
 
 router.post('/create-sticker-pack', createStickerPack(connection));
 
-router.post('/add-stickers', addStickers(connection));
+// router.post('/add-stickers', addStickers(connection));
 
 router.get('/me', getUser(connection));
 
