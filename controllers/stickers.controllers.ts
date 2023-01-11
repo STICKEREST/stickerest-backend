@@ -19,6 +19,11 @@ export const createStickerPack = (connection: Database) : any => {
         const sticker : any = req.body;
         let yourDate = new Date()
         const today : string = yourDate.toISOString().split('T')[0];
+
+        //@ts-ignore
+        const images : any = Object.values(req.files);
+        
+        const tags : string[] = sticker.tag; 
     
         connection.query(
             `INSERT INTO WhatsappStickerPack (nr_downloads, price_digital, name, Designer, dt_upload, nr_sold, physical_price, link)
@@ -26,22 +31,86 @@ export const createStickerPack = (connection: Database) : any => {
             function (err: any, rows: any, fields: any) {
                 if (err) throw err
 
-                console.log(rows);
+                // console.log(rows);
             
                 // res.send(`${sticker.name} added by ${email} successfully`);
-            });
 
+                connection.query(
+                    `SELECT ID FROM WhatsappStickerPack WHERE name='${sticker.name}' AND Designer='${email}' AND dt_upload = '${today}' AND ID NOT IN (SELECT DISTINCT I.ID FROM Image I) LIMIT 1;`, 
+                    function (err: any, rows: any, fields: any) {
+                        if (err) throw err
         
+                        const ID = rows[0].ID;
+                        
+                        let error : undefined | string = undefined;
+                                          
+                        if(tags)
+                            for(let i : number = 0; i < tags.length; i++) {
+        
+                                connection.query(
+                                    `INSERT INTO Tags (ID, tag)
+                                    VALUES (${ID}, '${tags[i]}');`,
+                                    function (err: any, rows: any, fields: any) {
+                                        if (err) 
+                                            if(error)
+                                                error += err;
+                                            else 
+                                                error = err;
+                        
+                                    })
+        
+                            }
+                        
+                        for(let i = 0; i < images.length; i++) {
+                            const image = images[i];
+        
+                            const uploadPath = "./public/files/temp/" + image.name;
+                            image.mv(uploadPath, function(err: any) {
+                                if (err)
+                                console.log("Error");
+        
+                                cloudinary.uploader
+                                .upload(uploadPath)
+                                .then((info: any) => {
+                                    const url = info.secure_url;
+                    
+                                    console.log("Image " + i + " has been uploaded at " + url);
+        
+                                    fs.unlinkSync(uploadPath);
+                    
+                                    connection.query(
+                                                `INSERT INTO Image (ID, ordinal_order, image_file)
+                                                VALUES (${ID}, ${i}, '${url}');`,
+                                                function (err: any, rows: any, fields: any) {
+                                                    if (err) 
+                                                        if(error)
+                                                            error += err;
+                                                        else 
+                                                            error = err;
+                                    
+                                                    // console.log(rows);
+                                                    
+                                                })
+                                })
+                                .catch((error: any) => {
+                                    fs.unlinkSync(uploadPath);
+                                    console.log(error)});
+        
+                            });
+        
+                        
+                    
+                        }
+        
+                    
+                        res.send(`The creation of the pack ${sticker.name} made by ${email} was successful`);
+        
+        
+                });
 
-        connection.query(
-            `SELECT ID FROM WhatsappStickerPack WHERE name='${sticker.name}' AND Designer='${email}' AND dt_upload = '${today}' AND ID NOT IN (SELECT DISTINCT I.ID FROM Image I) LIMIT 1;`, 
-            function (err: any, rows: any, fields: any) {
-                if (err) throw err
-
-                console.log(rows[0].ID);
-
-                res.send(""+rows[0].ID);
             });
+            
+        
 
         
     }
@@ -49,88 +118,88 @@ export const createStickerPack = (connection: Database) : any => {
 }
 
 
-//TODO: it must throw err if there are already stickers
-export const addStickers = (connection: Database) : any => {
+// //TODO: it must throw err if there are already stickers
+// export const addStickers = (connection: Database) : any => {
 
-    return (req : Request, res : Response) : void => {
-        const sticker : any = req.body;
+//     return (req : Request, res : Response) : void => {
+//         const sticker : any = req.body;
         
-        //@ts-ignore
-        const images : any = Object.values(req.files);
+//         //@ts-ignore
+//         const images : any = Object.values(req.files);
         
-        const ID = sticker.ID;
-        const email : string = res.locals.user.email;
+//         const ID = sticker.ID;
+//         const email : string = res.locals.user.email;
         
-        let error : undefined | string = undefined;
+//         let error : undefined | string = undefined;
         
-        const tags : string[] = sticker.tag;
+//         const tags : string[] = sticker.tag;
 
-        if(tags)
-            for(let i : number = 0; i < tags.length; i++) {
+//         if(tags)
+//             for(let i : number = 0; i < tags.length; i++) {
 
-                connection.query(
-                    `INSERT INTO Tags (ID, tag)
-                    VALUES (${sticker.ID}, '${tags[i]}');`,
-                    function (err: any, rows: any, fields: any) {
-                        if (err) 
-                            if(error)
-                                error += err;
-                            else 
-                                error = err;
+//                 connection.query(
+//                     `INSERT INTO Tags (ID, tag)
+//                     VALUES (${sticker.ID}, '${tags[i]}');`,
+//                     function (err: any, rows: any, fields: any) {
+//                         if (err) 
+//                             if(error)
+//                                 error += err;
+//                             else 
+//                                 error = err;
         
-                    })
+//                     })
 
-            }
-        // console.log("Images ARE " + JSON.stringify(images));
+//             }
+//         // console.log("Images ARE " + JSON.stringify(images));
         
-        for(let i = 0; i < images.length; i++) {
-            const image = images[i];
+//         for(let i = 0; i < images.length; i++) {
+//             const image = images[i];
 
-            console.log(image);
-            const uploadPath = "./public/files/temp/" + image.name;
-            console.log(uploadPath);
-            image.mv(uploadPath, function(err: any) {
-                if (err)
-                  console.log("Error");
+//             console.log(image);
+//             const uploadPath = "./public/files/temp/" + image.name;
+//             console.log(uploadPath);
+//             image.mv(uploadPath, function(err: any) {
+//                 if (err)
+//                   console.log("Error");
 
-                cloudinary.uploader
-                .upload(uploadPath)
-                .then((info: any) => {
-                    const url = info.secure_url;
+//                 cloudinary.uploader
+//                 .upload(uploadPath)
+//                 .then((info: any) => {
+//                     const url = info.secure_url;
     
-                    console.log("Image " + i + " has been uploaded at " + url);
+//                     console.log("Image " + i + " has been uploaded at " + url);
 
-                    fs.unlinkSync(uploadPath);
+//                     fs.unlinkSync(uploadPath);
     
-                    connection.query(
-                                `INSERT INTO Image (ID, ordinal_order, image_file)
-                                VALUES (${ID}, ${i}, '${url}');`,
-                                function (err: any, rows: any, fields: any) {
-                                    if (err) 
-                                        if(error)
-                                            error += err;
-                                        else 
-                                            error = err;
+//                     connection.query(
+//                                 `INSERT INTO Image (ID, ordinal_order, image_file)
+//                                 VALUES (${ID}, ${i}, '${url}');`,
+//                                 function (err: any, rows: any, fields: any) {
+//                                     if (err) 
+//                                         if(error)
+//                                             error += err;
+//                                         else 
+//                                             error = err;
                     
-                                    // console.log(rows);
+//                                     // console.log(rows);
                                     
-                                })
-                })
-                .catch((error: any) => console.log(error));
+//                                 })
+//                 })
+//                 .catch((error: any) => console.log(error));
 
-              });
+//               });
 
            
     
-        }
+//         }
 
     
-        res.send(`Stickers and tags added by ${email} successfully ` + error !== undefined  ? ` with the error: ${error} ` : ` `);
+//         res.send(`Stickers and tags added by ${email} successfully ` + error !== undefined  ? ` with the error: ${error} ` : ` `);
 
 
-    }
+//     }
 
-}
+// }
 
 export const getStickerPacks = (connection: Database) : any => {
 
