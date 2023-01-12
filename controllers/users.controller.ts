@@ -176,6 +176,24 @@ export const removeFavorites = (connection: Database) : any => {
 
 }
 
+export const isFavorite = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+        const { id } = req.params;
+        const email = res.locals.user.email;
+    
+        connection.query(
+            `SELECT * FROM Favorites WHERE email = '${email}' AND ID = ${id}`, 
+            function (err: any, rows: any, fields: any) {
+
+                console.log(rows);
+                res.send(rows[0] !== undefined);
+                
+            })
+    }
+
+}
+
 export const addSaved = (connection: Database) : any => {
 
     return (req : Request, res : Response) : void => {
@@ -220,6 +238,24 @@ export const removeSaved = (connection: Database) : any => {
                     res.send(rows);
 
                 }
+                
+            })
+    }
+
+}
+
+export const isSaved = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+        const { id } = req.params;
+        const email = res.locals.user.email;
+    
+        connection.query(
+            `SELECT * FROM Saved WHERE email = '${email}' AND ID = ${id}`, 
+            function (err: any, rows: any, fields: any) {
+
+                console.log(rows);
+                res.send(rows[0] !== undefined);
                 
             })
     }
