@@ -225,7 +225,7 @@ export const getStickers = (connection: Database) : any => {
         const { id } = req.params;
     
         connection.query(
-            `SELECT * FROM Image WHERE ID = ${id}`, 
+            `SELECT * FROM Image WHERE ID = ${id};`, 
             function (err: any, rows: any, fields: any) {
                 if (err) throw err
 
