@@ -22,7 +22,7 @@ router.get('/add-favorites-:id', addFavorites(connection));
 
 router.get('/remove-favorites-:id', removeFavorites(connection) );
 
-router.get('/is-favorite-:id', isFavorite(connection) );
+router.get('/is-favorites-:id', isFavorite(connection) );
 
 router.get('/add-saved-:id', addSaved(connection));
 
