@@ -249,6 +249,23 @@ export const isSaved = (connection: Database) : any => {
 
 }
 
+export const mySaved = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+        const email = res.locals.user.email;
+    
+        connection.query(
+            `SELECT ID FROM Saved WHERE email = '${email}'`, 
+            function (err: any, rows: any, fields: any) {
+
+                console.log(rows);
+                res.send(rows);
+                
+            })
+    }
+
+}
+
 
 // export const createStickerPack = (connection: Database) : any => {
 
