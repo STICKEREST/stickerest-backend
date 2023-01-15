@@ -255,7 +255,7 @@ export const mySaved = (connection: Database) : any => {
         const email = res.locals.user.email;
     
         connection.query(
-            `SELECT ID FROM Saved WHERE email = '${email}'`, 
+            `SELECT W.ID, name, nr_downloads, image_file as logo, Designer, dt_upload FROM Image I, WhatsappStickerPack W, Saved S WHERE I.ID = W.ID AND S.ID = W.ID AND S.email = '${email}' AND I.ordinal_order = 0 ORDER BY nr_downloads DESC LIMIT 10;`, 
             function (err: any, rows: any, fields: any) {
 
                 console.log(rows);
