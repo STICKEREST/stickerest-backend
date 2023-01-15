@@ -218,6 +218,50 @@ export const getStickerPacks = (connection: Database) : any => {
 
 }
 
+export const getRandomStickerPack = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+
+        connection.query(
+            `SELECT MAX(ID) AS ID FROM WhatsappStickerPack;`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) throw err
+
+                console.log(rows);
+            
+                const id : number = Math.floor(Math.random() * (rows[0].ID - 1 + 1) + 1); 
+
+                console.log(id);
+
+                connection.query(
+                    `SELECT W.ID, name, image_file as logo FROM Image I, WhatsappStickerPack W WHERE I.ID = W.ID AND I.ordinal_order = 0 AND W.ID = ${id};`, 
+                    function (err: any, rows: any, fields: any) {
+                        if (err) throw err
+        
+                        console.log(rows);
+
+                        if(rows.length === 0) {
+
+                            connection.query(
+                                `SELECT name FROM WhatsappStickerPack WHERE ID = ${id};`, 
+                                function (err: any, rows: any, fields: any) {
+                                    if (err) throw err
+                    
+                                    res.send([{ID: id, name : rows[0].name, logo : ''}]);
+                                })
+
+                        } else {
+                            res.send(rows);
+                        }
+                    
+                        
+                    })
+            })
+    
+    }
+
+}
+
 export const getStickers = (connection: Database) : any => {
 
     return (req : Request, res : Response) : void => {
