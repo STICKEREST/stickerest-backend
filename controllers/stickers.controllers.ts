@@ -198,6 +198,45 @@ export const getRandomStickerPack = (connection: Database) : any => {
 
 }
 
+export const getStickerPackByName = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+
+        const { name } = req.params;
+    
+        connection.query(
+            `SELECT W.ID, name, image_file as logo FROM Image I, WhatsappStickerPack W WHERE I.ID = W.ID AND I.ordinal_order = 0 AND W.name LIKE '%${name}%';`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) throw err
+
+                console.log(rows);
+            
+                res.send(rows);
+            })
+    }
+
+}
+
+export const getStickerPackByTags = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+
+        const { tag } = req.params;
+    
+        connection.query(
+            `SELECT W.ID, name, nr_downloads, image_file as logo, Designer, dt_upload FROM Image I, WhatsappStickerPack W WHERE I.ID = W.ID AND I.ordinal_order = 0 AND W.ID IN (SELECT DISTINCT ID FROM Tags WHERE tag LIKE '%${tag}%');`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) throw err
+
+                console.log(rows);
+            
+                res.send(rows);
+            })
+    }
+
+}
+
+
 export const getStickers = (connection: Database) : any => {
 
     return (req : Request, res : Response) : void => {
