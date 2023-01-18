@@ -11,10 +11,15 @@ import {sessionMiddleware, checkAuthentication} from './middlewares/session.midd
 var fs = require('fs');
 
 
-var dir = './public/files/temp';
+const dir = './public/files/temp';
+const outputDir = './public/files/output/';
 
 if (!fs.existsSync(dir)){
     fs.mkdirSync(dir, { recursive: true });
+}
+
+if (!fs.existsSync(outputDir)){
+  fs.mkdirSync(outputDir, { recursive: true });
 }
 
 require('dotenv').config();

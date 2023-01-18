@@ -10,6 +10,8 @@ const cloudinary = require('cloudinary').v2;
 
 var fs = require('fs');
 
+const sharp = require('sharp');
+
 
 
 export const createStickerPack = (connection: Database) : any => {
@@ -65,36 +67,52 @@ export const createStickerPack = (connection: Database) : any => {
                             const image = images[i];
         
                             const uploadPath = "./public/files/temp/" + image.name;
+                            const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".webp";
                             image.mv(uploadPath, function(err: any) {
                                 if (err)
                                 console.log("Error");
-        
-                                cloudinary.uploader
-                                .upload(uploadPath)
-                                .then((info: any) => {
-                                    const url = info.secure_url;
-                    
-                                    console.log("Image " + i + " has been uploaded at " + url);
-        
-                                    fs.unlinkSync(uploadPath);
-                    
-                                    connection.query(
-                                                `INSERT INTO Image (ID, ordinal_order, image_file)
-                                                VALUES (${ID}, ${i}, '${url}');`,
-                                                function (err: any, rows: any, fields: any) {
-                                                    if (err) 
-                                                        if(error)
-                                                            error += err;
-                                                        else 
-                                                            error = err;
+
+                                sharp(uploadPath)
+                                .webp({ quality: 30 })
+                                .toFile(outputPath)
+                                .then((res: any) => {
+
+
+                                    cloudinary.uploader
+                                    .upload(outputPath)
+                                    .then((info: any) => {
+                                        const url = info.secure_url;
+                        
+                                        console.log("Image " + i + " has been uploaded at " + url);
+            
+                                        fs.unlinkSync(uploadPath);
+                                         fs.unlinkSync(outputPath);
+                        
+                                        connection.query(
+                                                    `INSERT INTO Image (ID, ordinal_order, image_file)
+                                                    VALUES (${ID}, ${i}, '${url}');`,
+                                                    function (err: any, rows: any, fields: any) {
+                                                        if (err) 
+                                                            if(error)
+                                                                error += err;
+                                                            else 
+                                                                error = err;
+                                        
+                                                        // console.log(rows);
+                                                        
+                                                    })
+                                    })
+                                    .catch((error: any) => {
+                                        fs.unlinkSync(uploadPath);
+                                         fs.unlinkSync(outputPath);
+                                        console.log(error)
+                                    });
+
                                     
-                                                    // console.log(rows);
-                                                    
-                                                })
-                                })
-                                .catch((error: any) => {
-                                    fs.unlinkSync(uploadPath);
-                                    console.log(error)});
+
+                                });
+        
+                                
         
                             });
         
@@ -118,88 +136,6 @@ export const createStickerPack = (connection: Database) : any => {
 }
 
 
-// //TODO: it must throw err if there are already stickers
-// export const addStickers = (connection: Database) : any => {
-
-//     return (req : Request, res : Response) : void => {
-//         const sticker : any = req.body;
-        
-//         //@ts-ignore
-//         const images : any = Object.values(req.files);
-        
-//         const ID = sticker.ID;
-//         const email : string = res.locals.user.email;
-        
-//         let error : undefined | string = undefined;
-        
-//         const tags : string[] = sticker.tag;
-
-//         if(tags)
-//             for(let i : number = 0; i < tags.length; i++) {
-
-//                 connection.query(
-//                     `INSERT INTO Tags (ID, tag)
-//                     VALUES (${sticker.ID}, '${tags[i]}');`,
-//                     function (err: any, rows: any, fields: any) {
-//                         if (err) 
-//                             if(error)
-//                                 error += err;
-//                             else 
-//                                 error = err;
-        
-//                     })
-
-//             }
-//         // console.log("Images ARE " + JSON.stringify(images));
-        
-//         for(let i = 0; i < images.length; i++) {
-//             const image = images[i];
-
-//             console.log(image);
-//             const uploadPath = "./public/files/temp/" + image.name;
-//             console.log(uploadPath);
-//             image.mv(uploadPath, function(err: any) {
-//                 if (err)
-//                   console.log("Error");
-
-//                 cloudinary.uploader
-//                 .upload(uploadPath)
-//                 .then((info: any) => {
-//                     const url = info.secure_url;
-    
-//                     console.log("Image " + i + " has been uploaded at " + url);
-
-//                     fs.unlinkSync(uploadPath);
-    
-//                     connection.query(
-//                                 `INSERT INTO Image (ID, ordinal_order, image_file)
-//                                 VALUES (${ID}, ${i}, '${url}');`,
-//                                 function (err: any, rows: any, fields: any) {
-//                                     if (err) 
-//                                         if(error)
-//                                             error += err;
-//                                         else 
-//                                             error = err;
-                    
-//                                     // console.log(rows);
-                                    
-//                                 })
-//                 })
-//                 .catch((error: any) => console.log(error));
-
-//               });
-
-           
-    
-//         }
-
-    
-//         res.send(`Stickers and tags added by ${email} successfully ` + error !== undefined  ? ` with the error: ${error} ` : ` `);
-
-
-//     }
-
-// }
 
 export const getStickerPacks = (connection: Database) : any => {
 
