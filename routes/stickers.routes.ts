@@ -1,7 +1,9 @@
 import express, { Router } from 'express';
 import { getDb, Database } from '../db';
 import { createUser, getUser, getUsers, logUser } from '../controllers/users.controller';
-import { getStickerPacks, getStickers, getStickerPack, getMostDownloaded, getMostFavorited, getMostSaved, getRandomStickerPack, getStickerPackByName, getStickerPackByTags} from '../controllers/stickers.controllers';
+import { getStickerPacks, getStickers, getStickerPack, getMostDownloaded, 
+    getMostFavorited, getMostSaved, getRandomStickerPack, getStickerPackByName, 
+    getStickerPackByTags, addDownload} from '../controllers/stickers.controllers';
 
 const router: Router = express.Router();
 const connection: Database = getDb();
@@ -21,6 +23,8 @@ router.get('/name-:name', getStickerPackByName(connection));
 router.get('/tags-:tag', getStickerPackByTags(connection));
 
 router.get('/images-:id', getStickers(connection));
+
+router.get('/download-:id', addDownload(connection));
 
 router.get('/:id', getStickerPack(connection));
 

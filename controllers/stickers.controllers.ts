@@ -326,3 +326,22 @@ export const getMostSaved = (connection: Database) : any => {
     }
 
 }
+
+export const addDownload =  (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+
+        const { id } = req.params;
+    
+        connection.query(
+            `UPDATE WhatsappStickerPack SET nr_downloads = (nr_downloads + 1) WHERE ID = ${id};`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) throw err
+
+                console.log(rows);
+            
+                res.send(rows);
+            })
+    }
+
+}
