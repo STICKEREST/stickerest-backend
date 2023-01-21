@@ -80,11 +80,11 @@ export const getUser = (connection: Database) : any => {
 
 export const updateUser = (connection : Database) : any => {
         return (req : any, res : any) : void => {
-            const { nickname, telegram } = req.body; 
+            const { nickname } = req.body; 
             const email = res.locals.user.email;
         
             connection.query(
-                `UPDATE Utilizer U SET U.nickname = '${nickname}', U.telegram = '${telegram}' WHERE U.email = '${email}';`, 
+                `UPDATE Utilizer U SET U.nickname = '${nickname}' WHERE U.email = '${email}';`, 
                 function (err: any, rows: any, fields: any) {
                     if (err) throw err
                 
