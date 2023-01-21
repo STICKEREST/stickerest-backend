@@ -40,11 +40,6 @@ app.use(passport.session());
 
 app.use(expressFileUpload());
 
-// app.get("/api/demo", (req,res) => {
-//   console.log(req.isAuthenticated());
-//   res.json({sessionId : req.sessionID});
-// })
-
 app.use('/users', usersRoutes);
 
 app.use('/stickers', stickersRoutes);

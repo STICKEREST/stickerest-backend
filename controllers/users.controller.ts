@@ -71,8 +71,6 @@ export const getUser = (connection: Database) : any => {
             `SELECT * FROM Utilizer U WHERE U.email = '${email}';`, 
             function (err: any, rows: any, fields: any) {
                 if (err) throw err
-
-                console.log(rows);
             
                 res.send(rows)
             })
@@ -104,8 +102,6 @@ export const getHome = (connection: Database) : any => {
             `SELECT * FROM Utilizer U WHERE U.email = '${email}';`, 
             function (err: any, rows: any, fields: any) {
                 if (err) throw err
-
-                console.log(rows);
             
                 res.send(rows)
             })
@@ -128,7 +124,6 @@ export const addFavorites = (connection: Database) : any => {
 
                 } else {
 
-                    console.log(rows);
                     res.send(rows);
 
                 }
@@ -153,7 +148,6 @@ export const removeFavorites = (connection: Database) : any => {
 
                 } else {
 
-                    console.log(rows);
                     res.send(rows);
 
                 }
@@ -173,7 +167,6 @@ export const isFavorite = (connection: Database) : any => {
             `SELECT * FROM Favorites WHERE email = '${email}' AND ID = ${id}`, 
             function (err: any, rows: any, fields: any) {
 
-                console.log(rows);
                 res.send(rows[0] !== undefined);
                 
             })
@@ -196,7 +189,6 @@ export const addSaved = (connection: Database) : any => {
 
                 } else {
 
-                    console.log(rows);
                     res.send(rows);
 
                 }
@@ -221,7 +213,6 @@ export const removeSaved = (connection: Database) : any => {
 
                 } else {
 
-                    console.log(rows);
                     res.send(rows);
 
                 }
@@ -241,7 +232,6 @@ export const isSaved = (connection: Database) : any => {
             `SELECT * FROM Saved WHERE email = '${email}' AND ID = ${id}`, 
             function (err: any, rows: any, fields: any) {
 
-                console.log(rows);
                 res.send(rows[0] !== undefined);
                 
             })
@@ -258,98 +248,9 @@ export const mySaved = (connection: Database) : any => {
             `SELECT W.ID, name, nr_downloads, image_file as logo, Designer, dt_upload FROM Image I, WhatsappStickerPack W, Saved S WHERE I.ID = W.ID AND S.ID = W.ID AND S.email = '${email}' AND I.ordinal_order = 0 ORDER BY nr_downloads DESC LIMIT 10;`, 
             function (err: any, rows: any, fields: any) {
 
-                console.log(rows);
                 res.send(rows);
                 
             })
     }
 
 }
-
-
-// export const createStickerPack = (connection: Database) : any => {
-
-//     return (req : Request, res : Response) : void => {
-//         const email : string = res.locals.user.email;
-//         const sticker : any = req.body;
-//         let yourDate = new Date()
-//         const today : string = yourDate.toISOString().split('T')[0];
-    
-//         connection.query(
-//             `INSERT INTO WhatsappStickerPack (nr_downloads, price_digital, name, Designer, dt_upload, nr_sold, physical_price, link)
-//             VALUES (0, 00.00, '${sticker.name}', '${email}', '${today}', NULL, NULL, NULL);`, 
-//             function (err: any, rows: any, fields: any) {
-//                 if (err) throw err
-
-//                 console.log(rows);
-            
-//                 res.send(`${sticker.name} added by ${email} successfully`);
-//             })
-//     }
-
-// }
-
-// export const getHome = (connection: Database) : any => {
-
-//     console.log('aiuto')
-
-//     return (req : Request, res : Response) : void => {
-//         const  nickname  = "12321";
-
-//         console.log('aaaa')
-    
-//         connection.query(
-//             `SELECT * FROM Utilizer U WHERE U.nickname = '${nickname}';`, 
-//             function (err: any, rows: any, fields: any) {
-//                 if (err) throw err
-
-//                 console.log(rows);
-            
-//                 res.send(rows)
-//             })
-//     }
-
-// }
-
-// export const deleteUser = (connection : Database) : any => {
-//     return (req : any, res : any) : void => {
-//         const { nickname } = req.params;
-    
-//         connection.query(
-//             `DELETE FROM Utilizer U WHERE U.nickname = '${nickname}';`, 
-//             function (err: any, rows: any, fields: any) {
-//                 if (err) throw err
-            
-//                 res.send(rows)
-//             })
-//     }
-// }
-
-// export const updateUser = (connection : Database) : any => {
-//     return (req : any, res : any) : void => {
-//         const { nickname } = req.params;
-//         const { email, password } = req.body; 
-    
-//         let updates : string[] = [];
-    
-//         if(email)
-//             updates.push(`U.email = '${email}'`);
-//         if(password)
-//             updates.push(`U.password = '${password}'`);
-    
-//         const query : string = updates.reduce((acc : string, update : string, index : number) => 
-//                                             acc = acc + update + (index !== updates.length-1 ? "," : "")
-//                                         ,"");
-    
-//         if(updates.length != 0)
-//             connection.query(
-//                 `UPDATE Utilizer U SET ${query} WHERE U.nickname = '${nickname}';`, 
-//                 function (err: any, rows: any, fields: any) {
-//                     if (err) throw err
-                
-//                     res.send(rows)
-//                 })
-//         else
-//             res.send("No modifications have been made");
-//     }
-// }
