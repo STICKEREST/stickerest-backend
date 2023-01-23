@@ -170,8 +170,9 @@ export const getRandomStickerPack = (connection: Database) : any => {
             `SELECT MAX(ID) AS ID FROM WhatsappStickerPack;`, 
             function (err: any, rows: any, fields: any) {
                 if (err) throw err
-            
-                const id : number = Math.floor(Math.random() * (rows[0].ID - 1 + 1) + 1); 
+                
+                //changed to 56 because its the first sticker pack with images and all of the following have images as well
+                const id : number = Math.floor(Math.random() * (rows[0].ID - 56 + 1) + 56); 
 
                 connection.query(
                     `SELECT W.ID, name, image_file as logo FROM Image I, WhatsappStickerPack W WHERE I.ID = W.ID AND I.ordinal_order = 0 AND W.ID = ${id};`, 
