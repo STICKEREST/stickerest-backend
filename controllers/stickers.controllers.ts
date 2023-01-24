@@ -131,7 +131,9 @@ export const createStickerPack = (connection: Database) : any => {
                         }
         
                     
-                        res.send(ID);
+                        res.send({
+                            ID: ID
+                        });
         
         
                 });
