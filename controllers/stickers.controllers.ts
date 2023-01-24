@@ -131,7 +131,7 @@ export const createStickerPack = (connection: Database) : any => {
                         }
         
                     
-                        res.send(`The creation of the pack ${sticker.name} made by ${email} was successful`);
+                        res.send(ID);
         
         
                 });
@@ -200,6 +200,23 @@ export const getRandomStickerPack = (connection: Database) : any => {
     }
 
 }
+
+// export const getLastStickerPackUploadedByMe = (connection: Database) : any => {
+
+//     return (req : Request, res : Response) : void => {
+
+//         // const { name } = req.params;
+    
+//         connection.query(
+//             `;`, 
+//             function (err: any, rows: any, fields: any) {
+//                 if (err) throw err
+            
+//                 res.send(rows);
+//             })
+//     }
+
+// }
 
 export const getStickerPackByName = (connection: Database) : any => {
 

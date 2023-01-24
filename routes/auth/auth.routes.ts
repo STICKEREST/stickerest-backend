@@ -20,6 +20,8 @@ router.post('/update-me', updateUser(connection));
 
 router.get('/my-saved', mySaved(connection));
 
+// router.get('/last-sticker-pack-uploaded', getLastStickerPackUploadedByMe(connection));
+
 router.get('/add-favorites-:id', addFavorites(connection));
 
 router.get('/remove-favorites-:id', removeFavorites(connection) );
