@@ -147,6 +147,25 @@ export const createStickerPack = (connection: Database) : any => {
 
 }
 
+export const addTelegram = (connection: Database) : any => {
+
+    return (req : Request, res : Response) : void => {
+
+        const email : string = res.locals.user.email;
+        const { id } = req.params;
+        const telegramName : string = req.body.telegramName;
+    
+        connection.query(
+            `UPDATE WhatsappStickerPack SET telegram_name = '${telegramName}' WHERE Designer = '${email}' AND id = ${id}`, 
+            function (err: any, rows: any, fields: any) {
+                if (err) throw err
+            
+                res.send(rows);
+            })
+    }
+
+}
+
 
 
 export const getStickerPacks = (connection: Database) : any => {
@@ -202,23 +221,6 @@ export const getRandomStickerPack = (connection: Database) : any => {
     }
 
 }
-
-// export const getLastStickerPackUploadedByMe = (connection: Database) : any => {
-
-//     return (req : Request, res : Response) : void => {
-
-//         // const { name } = req.params;
-    
-//         connection.query(
-//             `;`, 
-//             function (err: any, rows: any, fields: any) {
-//                 if (err) throw err
-            
-//                 res.send(rows);
-//             })
-//     }
-
-// }
 
 export const getStickerPackByName = (connection: Database) : any => {
 

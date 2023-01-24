@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { Database, getDb } from '../../db';
 import { getHome, getUser, logOut, addFavorites, addSaved, removeFavorites, removeSaved, updateUser, isFavorite, isSaved, mySaved } from '../../controllers/users.controller';
-import {createStickerPack} from '../../controllers/stickers.controllers';
+import {createStickerPack, addTelegram} from '../../controllers/stickers.controllers';
 
 const router: Router = express.Router();
 const connection: Database = getDb();
@@ -21,6 +21,8 @@ router.post('/update-me', updateUser(connection));
 router.get('/my-saved', mySaved(connection));
 
 // router.get('/last-sticker-pack-uploaded', getLastStickerPackUploadedByMe(connection));
+
+router.post('/add-telegram-:id', addTelegram(connection));
 
 router.get('/add-favorites-:id', addFavorites(connection));
 
