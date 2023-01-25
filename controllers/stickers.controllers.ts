@@ -41,6 +41,8 @@ export const createStickerPack = (connection: Database) : any => {
                         const ID = rows[0].ID;
                         
                         let error : undefined | string = undefined;
+
+                        console.log(Array.isArray(tags));
                                           
                         if(tags)
                             for(let i : number = 0; i < tags.length; i++) {
