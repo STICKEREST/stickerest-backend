@@ -12,7 +12,6 @@ var fs = require('fs');
 
 const sharp = require('sharp');
 
-
 export const createStickerPack = (connection: Database) : any => {
 
     return (req : Request, res : Response) : void => {
@@ -26,119 +25,116 @@ export const createStickerPack = (connection: Database) : any => {
         
         const tags : string[] = typeof sticker.tag === "string" ? [sticker.tag] : sticker.tag;
     
-        connection.query(
+        connection.promise().query(
             `INSERT INTO WhatsappStickerPack (nr_downloads, price_digital, name, Designer, dt_upload, nr_sold, physical_price, link)
-            VALUES (0, 00.00, '${sticker.name}', '${email}', '${today}', NULL, NULL, NULL);`, 
-            function (err: any, rows: any, fields: any) {
-                if (err) throw err
+            VALUES (0, 00.00, '${sticker.name}', '${email}', '${today}', NULL, NULL, NULL);`)
+        .then(([rows, fields] : [rows : any, fields : any]) => {
 
-                connection.query(
-                    `SELECT ID FROM WhatsappStickerPack WHERE name='${sticker.name}' AND Designer='${email}' AND dt_upload = '${today}' AND ID NOT IN (SELECT DISTINCT I.ID FROM Image I) LIMIT 1;`, 
-                    function (err: any, rows: any, fields: any) {
-                        if (err) throw err
-        
-                        const ID = rows[0].ID;
+            connection.promise().query(
+                `SELECT ID FROM WhatsappStickerPack WHERE name='${sticker.name}' AND Designer='${email}' AND dt_upload = '${today}' AND ID NOT IN (SELECT DISTINCT I.ID FROM Image I) LIMIT 1;`
+            ).then(([rows, fields] : [rows : any, fields : any]) => {
+
+                const ID = rows[0].ID;
                         
-                        let error : undefined | string = undefined;
-                        
-                        const upload = async () : Promise<void> => {
+                let error : undefined | string = undefined;
 
-                            if(tags) {
-                                tags.map( (tag : string) =>  (
-                                    async () => await connection.promise().query(
-                                        `INSERT INTO Tags (ID, tag)
-                                        VALUES (${ID}, '${tag}');`
-                                    //     ,
-                                    //     function (err: any, rows: any, fields: any) {
-                                    //         if (err) 
-                                    //             if(error)
-                                    //                 error += err;
-                                    //             else 
-                                    //                 error = err;
-                            
-                                    // }
-                                    )
-                                )).forEach(async (tagFunction : any) => {
-                                    await tagFunction();
-                                })
-                            }
+                if(tags) {
+                    tags.map( (tag : string) =>  (
+                        async () => await connection.promise().query(
+                            `INSERT INTO Tags (ID, tag)
+                            VALUES (${ID}, '${tag}');`
+                        )
+                    )).forEach(async (tagFunction : any) => {
+                        await tagFunction();
+                    })
+                }
 
-                            images.map( (imageElement : any, i : number) => (
-                                async () => {
+                images.map( (imageElement : any, i : number) => (
+                    async () => {
 
-                                    const image = imageElement;
-            
-                                    const uploadPath = "./public/files/temp/" + image.name;
-                                    const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".webp";
-                                    image.mv(uploadPath, function(err: any) {
-                                        if (err) {
-                                            console.log("Error");
-                                            fs.unlinkSync(uploadPath);
-                                        } else {
+                        const image = imageElement;
 
-                                            try {
+                        const uploadPath = "./public/files/temp/" + image.name;
+                        const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".webp";
+                        image.mv(uploadPath, function(err: any) {
+                            if (err) {
+                                console.log("Error");
+                                fs.unlinkSync(uploadPath);
+                            } else {
 
-                                                sharp(uploadPath)
-                                                .webp({ quality: 30 })
-                                                .toFile(outputPath)
-                                                .then((res: any) => {
+                                try {
 
-                                                    try {
+                                    sharp(uploadPath)
+                                    .webp({ quality: 30 })
+                                    .toFile(outputPath)
+                                    .then((res: any) => {
 
-                                                        cloudinary.uploader
-                                                        .upload(outputPath)
-                                                        .then(async (info: any) => {
-                                                            const url = info.secure_url;
-                                
-                                                            fs.unlinkSync(uploadPath);
-                                                            fs.unlinkSync(outputPath);
-                                            
-                                                            await connection.promise().query(
-                                                                `INSERT INTO Image (ID, ordinal_order, image_file)
-                                                                VALUES (${ID}, ${i}, '${url}');`
-                                                                // ,
-                                                                // function (err: any, rows: any, fields: any) {
-                                                                //     if (err) 
-                                                                //         if(error)
-                                                                //             error += err;
-                                                                //         else 
-                                                                //             error = err;
-                                                                    
-                                                                // }
-                                                                )
-                                                        })
-                                                        .catch((error: any) => {
-                                                            fs.unlinkSync(uploadPath);
-                                                            fs.unlinkSync(outputPath);
-                                                            console.log(error)
-                                                        });
+                                        try {
 
-                                                    } catch (err : any) {
-
-                                                        console.log("Error");
-                                                        fs.unlinkSync(uploadPath);
-                                                        fs.unlinkSync(outputPath);
-
-                                                    }                                            
-
-                                                });
-
-                                            } catch (err : any) {
-                                                console.log("Error");
+                                            cloudinary.uploader
+                                            .upload(outputPath)
+                                            .then(async (info: any) => {
+                                                const url = info.secure_url;
+                    
                                                 fs.unlinkSync(uploadPath);
                                                 fs.unlinkSync(outputPath);
-                                            }
-                                            
+                                
+                                                await connection.promise().query(
+                                                    `INSERT INTO Image (ID, ordinal_order, image_file)
+                                                    VALUES (${ID}, ${i}, '${url}');`
+                                                    // ,
+                                                    // function (err: any, rows: any, fields: any) {
+                                                    //     if (err) 
+                                                    //         if(error)
+                                                    //             error += err;
+                                                    //         else 
+                                                    //             error = err;
+                                                        
+                                                    // }
+                                                    )
+                                            })
+                                            .catch((error: any) => {
+                                                fs.unlinkSync(uploadPath);
+                                                fs.unlinkSync(outputPath);
+                                                console.log(error)
+                                            });
 
-                                        }
-                
+                                        } catch (err : any) {
+
+                                            console.log("Error");
+                                            fs.unlinkSync(uploadPath);
+                                            fs.unlinkSync(outputPath);
+
+                                        }                                            
+
                                     });
 
+                                } catch (err : any) {
+                                    console.log("Error");
+                                    fs.unlinkSync(uploadPath);
+                                    fs.unlinkSync(outputPath);
                                 }
-                            )).forEach(async (imageUploadFunction : any) => {
-                                await imageUploadFunction();
-                            })
-                            
+                                
+
+                            }
+    
+                        });
+
+                    }
+                )).forEach(async (imageUploadFunction : any) => {
+                    await imageUploadFunction();
+                }).then(() => {
+                    res.send({
+                        ID: ID
+                    });
+                })
+
+            })
+
+        });
+
+        
+            
                             // for(let i = 0; i < images.length; i++) {
 
                             //     queryPromisesUpload.push(async () : Promise<void> => {
@@ -151,27 +147,173 @@ export const createStickerPack = (connection: Database) : any => {
                             // };
 
 
-                        };
-
-
-                        upload().then(() => {
-
-                            res.send({
-                                ID: ID
-                            });
-
-                        })
-        
-                });
-
-            });
-            
         
 
         
     }
 
 }
+
+
+// export const createStickerPack = (connection: Database) : any => {
+
+//     return (req : Request, res : Response) : void => {
+//         const email : string = res.locals.user.email;
+//         const sticker : any = req.body;
+//         let yourDate = new Date()
+//         const today : string = yourDate.toISOString().split('T')[0];
+
+//         //@ts-ignore
+//         const images : any = Object.values(req.files);
+        
+//         const tags : string[] = typeof sticker.tag === "string" ? [sticker.tag] : sticker.tag;
+    
+//         connection.query(
+//             `INSERT INTO WhatsappStickerPack (nr_downloads, price_digital, name, Designer, dt_upload, nr_sold, physical_price, link)
+//             VALUES (0, 00.00, '${sticker.name}', '${email}', '${today}', NULL, NULL, NULL);`, 
+//             function (err: any, rows: any, fields: any) {
+//                 if (err) throw err
+
+//                 connection.query(
+//                     `SELECT ID FROM WhatsappStickerPack WHERE name='${sticker.name}' AND Designer='${email}' AND dt_upload = '${today}' AND ID NOT IN (SELECT DISTINCT I.ID FROM Image I) LIMIT 1;`, 
+//                     function (err: any, rows: any, fields: any) {
+//                         if (err) throw err
+        
+//                         const ID = rows[0].ID;
+                        
+//                         let error : undefined | string = undefined;
+                        
+//                         const upload = async () : Promise<void> => {
+
+//                             if(tags) {
+//                                 tags.map( (tag : string) =>  (
+//                                     async () => await connection.promise().query(
+//                                         `INSERT INTO Tags (ID, tag)
+//                                         VALUES (${ID}, '${tag}');`
+//                                     //     ,
+//                                     //     function (err: any, rows: any, fields: any) {
+//                                     //         if (err) 
+//                                     //             if(error)
+//                                     //                 error += err;
+//                                     //             else 
+//                                     //                 error = err;
+                            
+//                                     // }
+//                                     )
+//                                 )).forEach(async (tagFunction : any) => {
+//                                     await tagFunction();
+//                                 })
+//                             }
+
+//                             images.map( (imageElement : any, i : number) => (
+//                                 async () => {
+
+//                                     const image = imageElement;
+            
+//                                     const uploadPath = "./public/files/temp/" + image.name;
+//                                     const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".webp";
+//                                     image.mv(uploadPath, function(err: any) {
+//                                         if (err) {
+//                                             console.log("Error");
+//                                             fs.unlinkSync(uploadPath);
+//                                         } else {
+
+//                                             try {
+
+//                                                 sharp(uploadPath)
+//                                                 .webp({ quality: 30 })
+//                                                 .toFile(outputPath)
+//                                                 .then((res: any) => {
+
+//                                                     try {
+
+//                                                         cloudinary.uploader
+//                                                         .upload(outputPath)
+//                                                         .then(async (info: any) => {
+//                                                             const url = info.secure_url;
+                                
+//                                                             fs.unlinkSync(uploadPath);
+//                                                             fs.unlinkSync(outputPath);
+                                            
+//                                                             await connection.promise().query(
+//                                                                 `INSERT INTO Image (ID, ordinal_order, image_file)
+//                                                                 VALUES (${ID}, ${i}, '${url}');`
+//                                                                 // ,
+//                                                                 // function (err: any, rows: any, fields: any) {
+//                                                                 //     if (err) 
+//                                                                 //         if(error)
+//                                                                 //             error += err;
+//                                                                 //         else 
+//                                                                 //             error = err;
+                                                                    
+//                                                                 // }
+//                                                                 )
+//                                                         })
+//                                                         .catch((error: any) => {
+//                                                             fs.unlinkSync(uploadPath);
+//                                                             fs.unlinkSync(outputPath);
+//                                                             console.log(error)
+//                                                         });
+
+//                                                     } catch (err : any) {
+
+//                                                         console.log("Error");
+//                                                         fs.unlinkSync(uploadPath);
+//                                                         fs.unlinkSync(outputPath);
+
+//                                                     }                                            
+
+//                                                 });
+
+//                                             } catch (err : any) {
+//                                                 console.log("Error");
+//                                                 fs.unlinkSync(uploadPath);
+//                                                 fs.unlinkSync(outputPath);
+//                                             }
+                                            
+
+//                                         }
+                
+//                                     });
+
+//                                 }
+//                             )).forEach(async (imageUploadFunction : any) => {
+//                                 await imageUploadFunction();
+//                             })
+                            
+//                             // for(let i = 0; i < images.length; i++) {
+
+//                             //     queryPromisesUpload.push(async () : Promise<void> => {
+
+                                    
+
+//                             //     });
+
+                        
+//                             // };
+
+
+//                         };
+
+
+//                         upload().then(() => {
+
+//                             res.send({
+//                                 ID: ID
+//                             });
+
+//                         })
+        
+//                 });
+
+//             });
+            
+        
+
+        
+//     }
+
+// }
 
 
 
