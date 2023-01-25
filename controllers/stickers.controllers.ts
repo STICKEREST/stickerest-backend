@@ -49,7 +49,9 @@ export const createStickerPack = (connection: Database) : any => {
                     })
                 }
 
-                images.map( (imageElement : any, i : number) => (
+                const uploadImages = async () : Promise<void> => 
+                
+                { await images.map( (imageElement : any, i : number) => (
                     async () => {
 
                         const image = imageElement;
@@ -123,11 +125,19 @@ export const createStickerPack = (connection: Database) : any => {
                     }
                 )).forEach(async (imageUploadFunction : any) => {
                     await imageUploadFunction();
-                }).then(() => {
+                })
+
+                };
+
+                uploadImages().then( () => {
+
                     res.send({
                         ID: ID
                     });
+
                 })
+                    
+                
 
             })
 
