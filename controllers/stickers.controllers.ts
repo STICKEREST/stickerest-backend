@@ -45,17 +45,19 @@ export const createStickerPack = (connection: Database) : any => {
 
                             if(tags) {
                                 tags.map( (tag : string) =>  (
-                                    async () => connection.query(
+                                    async () => await connection.promise().query(
                                         `INSERT INTO Tags (ID, tag)
-                                        VALUES (${ID}, '${tag}');`,
-                                        function (err: any, rows: any, fields: any) {
-                                            if (err) 
-                                                if(error)
-                                                    error += err;
-                                                else 
-                                                    error = err;
+                                        VALUES (${ID}, '${tag}');`
+                                    //     ,
+                                    //     function (err: any, rows: any, fields: any) {
+                                    //         if (err) 
+                                    //             if(error)
+                                    //                 error += err;
+                                    //             else 
+                                    //                 error = err;
                             
-                                    })
+                                    // }
+                                    )
                                 )).forEach(async (tagFunction : any) => {
                                     await tagFunction();
                                 })
@@ -85,23 +87,25 @@ export const createStickerPack = (connection: Database) : any => {
 
                                                         cloudinary.uploader
                                                         .upload(outputPath)
-                                                        .then((info: any) => {
+                                                        .then(async (info: any) => {
                                                             const url = info.secure_url;
                                 
                                                             fs.unlinkSync(uploadPath);
                                                             fs.unlinkSync(outputPath);
                                             
-                                                            connection.query(
+                                                            await connection.promise().query(
                                                                 `INSERT INTO Image (ID, ordinal_order, image_file)
-                                                                VALUES (${ID}, ${i}, '${url}');`,
-                                                                function (err: any, rows: any, fields: any) {
-                                                                    if (err) 
-                                                                        if(error)
-                                                                            error += err;
-                                                                        else 
-                                                                            error = err;
+                                                                VALUES (${ID}, ${i}, '${url}');`
+                                                                // ,
+                                                                // function (err: any, rows: any, fields: any) {
+                                                                //     if (err) 
+                                                                //         if(error)
+                                                                //             error += err;
+                                                                //         else 
+                                                                //             error = err;
                                                                     
-                                                                })
+                                                                // }
+                                                                )
                                                         })
                                                         .catch((error: any) => {
                                                             fs.unlinkSync(uploadPath);

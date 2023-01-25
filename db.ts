@@ -2,7 +2,8 @@ require('dotenv').config();
 
 export interface Database {
     query : any,
-    connect : any
+    connect : any,
+    promise : any
 }
 
 let connection : Database | undefined = undefined;
