@@ -44,10 +44,10 @@ export const createStickerPack = (connection: Database) : any => {
                         const upload = async () : Promise<void> => {
 
                             if(tags) {
-                                tags.map( (tag : string, i : number) =>  (
+                                tags.map( (tag : string) =>  (
                                     async () => connection.query(
                                         `INSERT INTO Tags (ID, tag)
-                                        VALUES (${ID}, '${tag[i]}');`,
+                                        VALUES (${ID}, '${tag}');`,
                                         function (err: any, rows: any, fields: any) {
                                             if (err) 
                                                 if(error)
@@ -64,7 +64,7 @@ export const createStickerPack = (connection: Database) : any => {
                             images.map( (imageElement : any, i : number) => (
                                 async () => {
 
-                                    const image = imageElement[i];
+                                    const image = imageElement;
             
                                     const uploadPath = "./public/files/temp/" + image.name;
                                     const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".webp";
