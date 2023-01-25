@@ -44,12 +44,9 @@ export const createStickerPack = (connection: Database) : any => {
                         
                         const upload = async () : Promise<void> => {
 
-                            let queryPromisesTags = [];
-
-                            if(tags)
-                                for(let i : number = 0; i < tags.length; i++) {
-            
-                                    queryPromisesTags.push (async () : Promise<void> => connection.query(
+                            if(tags) {
+                                tags.map( (tag : string, i : number) =>  (
+                                    async () => connection.query(
                                         `INSERT INTO Tags (ID, tag)
                                         VALUES (${ID}, '${tags[i]}');`,
                                         function (err: any, rows: any, fields: any) {
@@ -59,15 +56,14 @@ export const createStickerPack = (connection: Database) : any => {
                                                 else 
                                                     error = err;
                             
-                                    }));
-            
-                                }
+                                    })
+                                )).forEach(async (tagFunction : any) => {
+                                    await tagFunction();
+                                })
+                            }
 
-                            let queryPromisesUpload = [];
-                            
-                            for(let i = 0; i < images.length; i++) {
-
-                                queryPromisesUpload.push(async () : Promise<void> => {
+                            images.map( (image : string, i : number) => (
+                                async () => {
 
                                     const image = images[i];
             
@@ -135,19 +131,22 @@ export const createStickerPack = (connection: Database) : any => {
                 
                                     });
 
-                                });
+                                }
+                            )).forEach(async (imageUploadFunction : any) => {
+                                await imageUploadFunction();
+                            })
+                            
+                            // for(let i = 0; i < images.length; i++) {
+
+                            //     queryPromisesUpload.push(async () : Promise<void> => {
+
+                                    
+
+                            //     });
 
                         
-                            };
+                            // };
 
-                            // Promise.all(queryPromisesTags)
-                            // .then(() => {
-                            //     Promise.all(queryPromisesUpload);
-                            // })
-
-                            await Promise.all(queryPromisesTags);
-
-                            await Promise.all(queryPromisesUpload);
 
                         };
 
