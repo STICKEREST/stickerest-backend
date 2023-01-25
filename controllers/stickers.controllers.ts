@@ -26,6 +26,7 @@ export const createStickerPack = (connection: Database) : any => {
         const images : any = Object.values(req.files);
         
         const tags : string[] = sticker.tag; 
+        console.log(JSON.stringify(tags));
     
         connection.query(
             `INSERT INTO WhatsappStickerPack (nr_downloads, price_digital, name, Designer, dt_upload, nr_sold, physical_price, link)
