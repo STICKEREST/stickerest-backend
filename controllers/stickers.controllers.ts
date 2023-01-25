@@ -41,100 +41,108 @@ export const createStickerPack = (connection: Database) : any => {
                         const ID = rows[0].ID;
                         
                         let error : undefined | string = undefined;
-                                          
-                        if(tags)
-                            for(let i : number = 0; i < tags.length; i++) {
-        
-                                connection.query(
-                                    `INSERT INTO Tags (ID, tag)
-                                    VALUES (${ID}, '${tags[i]}');`,
-                                    function (err: any, rows: any, fields: any) {
-                                        if (err) 
-                                            if(error)
-                                                error += err;
-                                            else 
-                                                error = err;
                         
-                                    })
-        
-                            }
-                        
-                        for(let i = 0; i < images.length; i++) {
-                            const image = images[i];
-        
-                            const uploadPath = "./public/files/temp/" + image.name;
-                            const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".webp";
-                            image.mv(uploadPath, function(err: any) {
-                                if (err) {
-                                    console.log("Error");
-                                    fs.unlinkSync(uploadPath);
-                                } else {
+                        const upload = async () : Promise<void> => {
 
-                                    try {
-
-                                        sharp(uploadPath)
-                                        .webp({ quality: 30 })
-                                        .toFile(outputPath)
-                                        .then((res: any) => {
-
-                                            try {
-
-                                                cloudinary.uploader
-                                                .upload(outputPath)
-                                                .then((info: any) => {
-                                                    const url = info.secure_url;
-                        
-                                                    fs.unlinkSync(uploadPath);
-                                                    fs.unlinkSync(outputPath);
-                                    
-                                                    connection.query(
-                                                        `INSERT INTO Image (ID, ordinal_order, image_file)
-                                                        VALUES (${ID}, ${i}, '${url}');`,
-                                                        function (err: any, rows: any, fields: any) {
-                                                            if (err) 
-                                                                if(error)
-                                                                    error += err;
-                                                                else 
-                                                                    error = err;
-                                                            
-                                                        })
-                                                })
-                                                .catch((error: any) => {
-                                                    fs.unlinkSync(uploadPath);
-                                                    fs.unlinkSync(outputPath);
-                                                    console.log(error)
-                                                });
-
-                                            } catch (err : any) {
-
-                                                console.log("Error");
-                                                fs.unlinkSync(uploadPath);
-                                                fs.unlinkSync(outputPath);
-
-                                            }                                            
-
-                                        });
-
-                                    } catch (err : any) {
+                            if(tags)
+                                for(let i : number = 0; i < tags.length; i++) {
+            
+                                    connection.query(
+                                        `INSERT INTO Tags (ID, tag)
+                                        VALUES (${ID}, '${tags[i]}');`,
+                                        function (err: any, rows: any, fields: any) {
+                                            if (err) 
+                                                if(error)
+                                                    error += err;
+                                                else 
+                                                    error = err;
+                            
+                                        })
+            
+                                }
+                            
+                            for(let i = 0; i < images.length; i++) {
+                                const image = images[i];
+            
+                                const uploadPath = "./public/files/temp/" + image.name;
+                                const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".webp";
+                                image.mv(uploadPath, function(err: any) {
+                                    if (err) {
                                         console.log("Error");
                                         fs.unlinkSync(uploadPath);
-                                        fs.unlinkSync(outputPath);
-                                    }
-                                    
+                                    } else {
 
-                                }
-        
-                            });
-        
+                                        try {
+
+                                            sharp(uploadPath)
+                                            .webp({ quality: 30 })
+                                            .toFile(outputPath)
+                                            .then((res: any) => {
+
+                                                try {
+
+                                                    cloudinary.uploader
+                                                    .upload(outputPath)
+                                                    .then((info: any) => {
+                                                        const url = info.secure_url;
+                            
+                                                        fs.unlinkSync(uploadPath);
+                                                        fs.unlinkSync(outputPath);
+                                        
+                                                        connection.query(
+                                                            `INSERT INTO Image (ID, ordinal_order, image_file)
+                                                            VALUES (${ID}, ${i}, '${url}');`,
+                                                            function (err: any, rows: any, fields: any) {
+                                                                if (err) 
+                                                                    if(error)
+                                                                        error += err;
+                                                                    else 
+                                                                        error = err;
+                                                                
+                                                            })
+                                                    })
+                                                    .catch((error: any) => {
+                                                        fs.unlinkSync(uploadPath);
+                                                        fs.unlinkSync(outputPath);
+                                                        console.log(error)
+                                                    });
+
+                                                } catch (err : any) {
+
+                                                    console.log("Error");
+                                                    fs.unlinkSync(uploadPath);
+                                                    fs.unlinkSync(outputPath);
+
+                                                }                                            
+
+                                            });
+
+                                        } catch (err : any) {
+                                            console.log("Error");
+                                            fs.unlinkSync(uploadPath);
+                                            fs.unlinkSync(outputPath);
+                                        }
+                                        
+
+                                    }
+            
+                                });
+            
+                            
                         
-                    
-                        }
-        
-                    
-                        res.send({
-                            ID: ID
-                        });
-        
+                            }
+
+
+                        };
+
+
+                        upload().then(() => {
+
+                            res.send({
+                                ID: ID
+                            });
+
+                        })
         
                 });
 
