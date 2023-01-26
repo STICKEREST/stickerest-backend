@@ -35,6 +35,10 @@ export const createStickerPack = (connection: Database) : any => {
             ).then(async ([rows, fields] : [rows : any, fields : any]) : Promise<number> => {
 
                 const ID = rows[0].ID;
+
+                console.log("\n\n" + ID + "\n\n");
+                console.log("\n\n" + tags + "\n\n");
+
                         
                 let error : undefined | string = undefined;
 
