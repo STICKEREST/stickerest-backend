@@ -35,20 +35,16 @@ export const createStickerPack = (connection: Database) : any => {
             ).then(async ([rows, fields] : [rows : any, fields : any]) : Promise<number> => {
 
                 const ID = rows[0].ID;
-
-                console.log("\n\n" + ID + "\n\n");
-                console.log("\n\n" + tags + "\n\n");
-
                         
                 let error : undefined | string = undefined;
 
                 if(tags) {
-                    await Promise.all(tags.map( (tag : string) =>  (
-                        async () => await connection.promise().query(
+                    await Promise.all(tags.map( (tag : string) =>  
+                            connection.promise().query(
                             `INSERT INTO Tags (ID, tag)
-                            VALUES (${ID}, '${tag}');`
+                            VALUES (${ID}, '${tag}');`)
                         )
-                    )));
+                    );
                 }
 
                 await Promise.all(images.map( (imageElement : any, i : number) => (
