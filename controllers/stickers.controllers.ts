@@ -55,14 +55,14 @@ export const createStickerPack = (connection: Database) : any => {
                         const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".webp";
                         await image.mv(uploadPath);
 
-                        sharp(uploadPath)
+                        await sharp(uploadPath)
                         .webp({ quality: 30 })
                         .toFile(outputPath)
-                        .then((res: any) => {
+                        .then(async (res: any) => {
 
                             try {
 
-                                cloudinary.uploader
+                                await cloudinary.uploader
                                 .upload(outputPath)
                                 .then(async (info: any) => {
                                     const url = info.secure_url;
