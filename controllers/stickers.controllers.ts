@@ -52,11 +52,14 @@ export const createStickerPack = (connection: Database) : any => {
                         const image = imageElement;
 
                         const uploadPath = "./public/files/temp/" + image.name;
-                        const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".webp";
+                        const outputPath = "./public/files/output/" + image.name.split(".")[0] + ".png";
                         await image.mv(uploadPath);
 
                         await sharp(uploadPath)
-                        .webp({ quality: 30 })
+                        .png({ quality: 30 })
+                        .resize(512, 512, {
+                            fit: sharp.fit.contain
+                        })
                         .toFile(outputPath)
                         .then(async (res: any) => {
 
