@@ -47,8 +47,7 @@ export const createStickerPack = (connection: Database) : any => {
                     );
                 }
 
-                await Promise.all(images.map( (imageElement : any, i : number) => (
-                     async () : Promise<void> =>   {
+                await Promise.all(images.map( async (imageElement : any, i : number) => {
 
                         const image = imageElement;
 
@@ -93,7 +92,7 @@ export const createStickerPack = (connection: Database) : any => {
                         });
 
                     }
-                )));
+                ));
 
                 return ID;              
 
