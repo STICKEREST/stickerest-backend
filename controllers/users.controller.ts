@@ -24,7 +24,7 @@ export const createUser = (connection: Database) : any => {
         connection.query(
             `INSERT INTO Utilizer (email,nickname, password) VALUES ('${user.email}', '${user.nickname}','${hashedPw}');`, 
             function (err: any, rows: any, fields: any) {
-                if (err) res.status(500).send("Users already registered with this email or nickname");
+                if (err) res.status(500).send({message : "Users already registered with this email or nickname"});
             
                 res.status(200).send();
             })
@@ -38,7 +38,7 @@ export const logUser = (connection: Database) : any => {
             if(!user) return res.status(401).json("Username or password is not matched");
 
             req.login(user , (err) => {
-                if(err) res.status(500).send("No username found with this email");
+                if(err) res.status(500).send({message : "No username found with this email"});
 
 
                 res.status(200).json("Successfully logged in!");
@@ -84,7 +84,7 @@ export const updateUser = (connection : Database) : any => {
             connection.query(
                 `UPDATE Utilizer U SET U.nickname = '${nickname}', U.telegram = '${telegram}' WHERE U.email = '${email}';`, 
                 function (err: any, rows: any, fields: any) {
-                    if (err) res.status(500).send("Problems encountered while updating");
+                    if (err) res.status(500).send({message : "Problems encountered while updating"});
                 
                     res.send(rows)
                 })
