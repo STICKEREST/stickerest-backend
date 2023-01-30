@@ -40,7 +40,7 @@ export const logUser = (connection: Database) : any => {
             })
 
             req.login(user , (err) => {
-                if(err) throw err;
+                if(err) res.status(500).send();
 
 
                 res.status(200).json("Successfully logged in!");
@@ -70,7 +70,7 @@ export const getUser = (connection: Database) : any => {
         connection.query(
             `SELECT * FROM Utilizer U WHERE U.email = '${email}';`, 
             function (err: any, rows: any, fields: any) {
-                if (err) throw err
+                if (err) res.status(500).send();
             
                 res.send(rows)
             })
@@ -86,7 +86,7 @@ export const updateUser = (connection : Database) : any => {
             connection.query(
                 `UPDATE Utilizer U SET U.nickname = '${nickname}', U.telegram = '${telegram}' WHERE U.email = '${email}';`, 
                 function (err: any, rows: any, fields: any) {
-                    if (err) throw err
+                    if (err) res.status(500).send();
                 
                     res.send(rows)
                 })
@@ -101,7 +101,7 @@ export const getHome = (connection: Database) : any => {
         connection.query(
             `SELECT * FROM Utilizer U WHERE U.email = '${email}';`, 
             function (err: any, rows: any, fields: any) {
-                if (err) throw err
+                if (err) res.status(500).send();
             
                 res.send(rows)
             })
