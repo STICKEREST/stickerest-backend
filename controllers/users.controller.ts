@@ -26,7 +26,7 @@ export const createUser = (connection: Database) : any => {
             function (err: any, rows: any, fields: any) {
                 if (err) res.status(500).send();
             
-                res.status(201).send();
+                res.status(200).send();
             })
     }
 }
@@ -43,7 +43,7 @@ export const logUser = (connection: Database) : any => {
                 if(err) throw err;
 
 
-                res.status(201).json("Successfully logged in!");
+                res.status(200).json("Successfully logged in!");
             })
         })(req,res,next);
     }
