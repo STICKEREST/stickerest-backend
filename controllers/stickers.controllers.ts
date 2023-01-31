@@ -248,7 +248,7 @@ export const getStickerPack = (connection: Database) : any => {
     
         connection.query(
             `
-            SELECT W.ID, name, nr_downloads, telegram_name, Designer, dt_upload, X.logo, COUNT(I.ordinal_order) as n_stickers FROM (SELECT image_file as logo FROM Image II WHERE II.ID = ${id} AND ordinal_order = 0) X, Image I, WhatsappStickerPack W WHERE I.ID = W.ID AND W.ID = ${id};`, 
+            SELECT W.ID, name, nr_downloads, telegram_name, nickname as Designer, dt_upload, X.logo, COUNT(I.ordinal_order) as n_stickers FROM (SELECT image_file as logo FROM Image II WHERE II.ID = ${id} AND ordinal_order = 0) X, Image I, WhatsappStickerPack W, Utilizer U WHERE I.ID = W.ID AND W.ID = ${id} AND U.email = W.Designer;`, 
             function (err: any, rows: any, fields: any) {
                 if (err) res.status(500).send();
             
